@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <title>PAKO GPT pokalbių langas</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { font-size: 2em; }
+        textarea, input[type="text"] { width: 100%; padding: 10px; font-size: 1.1em; }
+        button { padding: 10px 20px; font-size: 1em; margin-top: 10px; }
+        .message-container { margin-top: 20px; white-space: pre-wrap; }
+        .loading { color: #888; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>PAKO GPT pokalbių langas</h1>
+    <textarea id="user-input" rows="4" placeholder="Rašyk savo klausimą..."></textarea>
+    <br>
+    <button onclick="sendMessage()">Siųsti</button>
+
+    <div class="message-container" id="response-box"></div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById('user-input').value.trim();
+            const responseBox = document.getElementById('response-box');
+
+            if (!userInput) return;
+
+            responseBox.innerHTML = '⏳ Kraunama...';
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userInput })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    responseBox.innerHTML = `<strong>Atsakymas:</strong> ${data.response}`;
+                } else {
+                    responseBox.innerHTML = `<span style="color:red;"><strong>Klaida:</strong> ${data.error || 'Nežinoma problema'}</span>`;
+                }
+            } catch (error) {
+                responseBox.innerHTML = `<span style="color:red;">Nepavyko susisiekti su serveriu.</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
