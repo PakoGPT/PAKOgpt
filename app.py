@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 from googletrans import Translator
+import os
 
 app = Flask(__name__)
 translator = Translator()
